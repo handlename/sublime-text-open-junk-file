@@ -16,23 +16,18 @@ class OpenJunkFileCommand(sublime_plugin.WindowCommand):
 
     def open_junk_file(self, filename):
         dir_path = self.prepare_junk_dir()
-        self.window.open_file(dir_path + "/" + filename)
+        self.window.open_file(os.path.join(dir_path, filename))
 
     def prepare_junk_dir(self):
         junk_dir = os.path.expandvars(self.settings().get('junk_dir'))
         today = datetime.datetime.today()
         year = str(today.year)
         month = str(today.month)
+        path = os.path.join(junk_dir, year, month)
 
-        self.makedir(junk_dir)
-        self.makedir("/".join([junk_dir, year]))
-        self.makedir("/".join([junk_dir, year, month]))
-
-        return "/".join([junk_dir, year, month])
-
-    def makedir(self, path):
         if not os.path.isdir(path):
-            os.mkdir(path)
+            os.makedirs(path)
+        return path
 
     def default_filename(self):
         return datetime.datetime.today().strftime("%Y%m%d_%H%M%S")
